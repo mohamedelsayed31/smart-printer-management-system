@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Search Results</title>
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+  </head>
+  <body>
+    <%- include('../Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+      <%- include('../Components/sidebar.ejs', { currentPage: "search", username: username }) %>
+
+      <section class="w-100">
+        <%- include('../Components/navbar.ejs') %>
+
+        <div class="container-fluid mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Search Results</h2>
+            <a href="/dashboard" class="btn btn-outline-primary btn-sm">Back to Dashboard</a>
+          </div>
+
+          <% if (arr.length === 0) { %>
+            <div class="text-center mt-5">
+                <i class="bi bi-search" style="font-size: 4rem; color: #ccc;"></i>
+                <p class="mt-3 fs-4 text-muted">No employees found matching your search.</p>
+            </div>
+          <% } else { %>
+            <table style="width: 99%" class="text-center mx-auto table mt-3 table-striped table-bordered shadow-sm">
+              <thead class="table-dark">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Full Name</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">Salary</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% arr.forEach((item, index) => { %>
+                  <tr>
+                    <th scope="row"> <%= index + 1 %> </th>
+                    <td> <%= item.fullName %> </td>
+                    <td> <%= item.phone %> </td>
+                    <td> $<%= item.salary %> </td>
+                    <td> 
+                        <span class="badge <%= item.status === 'active' ? 'bg-success' : 'bg-danger' %>">
+                            <%= item.status %> 
+                        </span>
+                    </td>
+                    <td>
+                      <a data-bs-toggle="tooltip" data-bs-title="View details" data-bs-placement="top" class="btn btn-primary btn-sm" href="/dashboard/view/<%= item._id %>">
+                        <i class="bi bi-eye"></i>
+                      </a>
+    
+                      <a data-bs-toggle="tooltip" data-bs-title="Edit employee" data-bs-placement="top" class="btn btn-warning btn-sm" href="/dashboard/edit/<%= item._id %>">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+
+                      <form style="display: inline" action="/dashboard/delete/<%= item._id %>" method="post">
+                        <button data-bs-toggle="tooltip" data-bs-title="Delete employee" data-bs-placement="top" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

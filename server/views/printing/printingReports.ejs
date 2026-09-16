@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Printing Activity - Smart Printer</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+</head>
+<body>
+    <%- include('../Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+        <%- include('../Components/sidebar.ejs', { currentPage: "printing_reports", username: username }) %>
+
+        <section class="w-100">
+            <%- include('../Components/navbar.ejs') %>
+
+            <div class="container-fluid mt-4 px-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="mb-1"><i class="bi bi-file-earmark-bar-graph text-warning me-2"></i>Printing Activity</h2>
+                        <p class="text-muted small">Analyze printing jobs, revenue, and individual job profits.</p>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 mb-4 bg-light">
+                    <div class="card-body">
+                        <form action="/dashboard/printing/reports" method="GET" class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">Filter by Employee</label>
+                                <select name="employeeId" class="form-select">
+                                    <option value="">All Employees</option>
+                                    <% if (typeof employees !== 'undefined') { %>
+                                        <% employees.forEach(emp => { %>
+                                            <option value="<%= emp._id %>" <%= filters.employeeId == emp._id ? 'selected' : '' %>>
+                                                <%= emp.fullName || emp.username %>
+                                            </option>
+                                        <% }) %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">Start Date</label>
+                                <input type="date" name="startDate" class="form-control" value="<%= filters.startDate || '' %>">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">End Date</label>
+                                <input type="date" name="endDate" class="form-control" value="<%= filters.endDate || '' %>">
+                            </div>
+                            <div class="col-md-3 d-flex gap-2">
+                                <button type="submit" class="btn btn-warning w-100 fw-bold">Analyze</button>
+                                <a href="/dashboard/printing/reports" class="btn btn-outline-secondary w-100 text-decoration-none text-center d-flex align-items-center justify-content-center">Reset</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 text-dark">
+                        <h5 class="mb-0">Detailed Job Logs</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 text-center">
+                                <thead class="table-dark text-nowrap">
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Employee</th>
+                                        <th>Printer</th>
+                                        <th>Paper Type</th>
+                                        <th>Revenue</th>
+                                        <th>Cost</th>
+                                        <th>Net Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (jobs && jobs.length > 0) { %>
+                                        <% jobs.forEach(job => { %>
+                                            <tr>
+                                                <td class="small text-muted">
+                                                    <%= moment(job.jobDate || job.createdAt).format('DD/MM/YYYY') %><br>
+                                                    <span class="fw-bold text-dark"><%= moment(job.jobDate || job.createdAt).format('hh:mm A') %></span>
+                                                </td>
+                                                <td class="fw-bold text-dark text-nowrap">
+                                                    <%= job.employee ? (job.employee.fullName || job.employee.username) : 'N/A' %>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1">
+                                                        <i class="bi bi-printer me-1 text-dark"></i>
+                                                        <%= job.printer ? job.printer.name : 'Unknown' %>
+                                                    </span>
+                                                </td>
+                                                <td><span class="small"><%= job.paperType %></span></td>
+                                                <td class="text-primary fw-bold"><%= (job.totalPrice || 0).toLocaleString() %></td>
+                                                <td class="text-danger fw-semibold"><%= (job.costPrice || 0).toLocaleString() %></td>
+                                                <td class="bg-success-subtle fw-bold text-success">
+                                                    <%= ((job.totalPrice || 0) - (job.costPrice || 0)).toLocaleString() %>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="7" class="py-5">
+                                                <div class="text-center text-muted">
+                                                    <i class="bi bi-file-earmark-x fs-1 d-block mb-3 opacity-25"></i>
+                                                    <h5>No Printing Activities Found</h5>
+                                                    <p class="small">Try adjusting your filters or date range.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+</body>
+</html>

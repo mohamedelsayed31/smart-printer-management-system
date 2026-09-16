@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Attendance Reports - Smart Printer</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+        <%- include('../Components/sidebar.ejs', { currentPage: "attendance_reports", username: username }) %>
+
+        <section class="w-100">
+            <%- include('../Components/navbar.ejs') %>
+
+            <div class="container-fluid mt-4 px-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="mb-1"><i class="bi bi-person-check-fill text-info me-2"></i>Attendance Logs</h2>
+                        <p class="text-muted small">Track employees clock-in/out records.</p>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 mb-4 bg-light">
+                    <div class="card-body">
+                        <form action="/dashboard/attendance/reports" method="GET" class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">Employee</label>
+                                <select name="employeeId" class="form-select">
+                                    <option value="">All Employees</option>
+                                    <% if (typeof employees !== 'undefined' && employees.length > 0) { %>
+                                        <% employees.forEach(emp => { %>
+                                            <option value="<%= emp._id %>" <%= (typeof filters !== 'undefined' && filters.employeeId == emp._id.toString()) ? 'selected' : '' %>>
+                                                <%= emp.fullName || emp.username || "Employee" %>
+                                            </option>
+                                        <% }) %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">From</label>
+                                <input type="date" name="startDate" class="form-control" value="<%= (typeof filters !== 'undefined') ? filters.startDate : '' %>">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">To</label>
+                                <input type="date" name="endDate" class="form-control" value="<%= (typeof filters !== 'undefined') ? filters.endDate : '' %>">
+                            </div>
+                            <div class="col-md-3 d-flex gap-2">
+                                <button type="submit" class="btn btn-info text-white w-100">Filter</button>
+                                <a href="/dashboard/attendance/reports" class="btn btn-outline-secondary w-100 text-decoration-none text-center">Reset</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Date</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Duration</th> <th>Status</th>
+                                    <th>Location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (typeof reports !== 'undefined' && reports.length > 0) { %>
+                                    <% reports.forEach(log => { %>
+                                        <% 
+                                            let empName = "Unknown Employee";
+                                            if (log.employeeId) {
+                                                if (log.employeeId.fullName && log.employeeId.fullName.trim() !== "") {
+                                                    empName = log.employeeId.fullName;
+                                                } else if (log.employeeId.username && log.employeeId.username.trim() !== "") {
+                                                    empName = log.employeeId.username;
+                                                } else if (log.employeeId.userId && log.employeeId.userId.username) {
+                                                    empName = log.employeeId.userId.username;
+                                                }
+                                            } else if (log.username) {
+                                                empName = log.username;
+                                            } else {
+                                                empName = "System Admin (قديم)";
+                                            }
+
+                                            // 🌟 حساب مدة العمل الفعالة بدقة باستخدام moment
+                                            let durationText = "---";
+                                            if (log.checkIn) {
+                                                let endTime = log.checkOut ? moment(log.checkOut) : moment();
+                                                let diffMs = endTime.diff(moment(log.checkIn));
+                                                let duration = moment.duration(diffMs);
+                                                
+                                                let hours = Math.floor(duration.asHours());
+                                                let minutes = duration.minutes();
+                                                
+                                                if (hours > 0) {
+                                                    durationText = `${hours}h ${minutes}m`;
+                                                } else {
+                                                    durationText = `${minutes}m`;
+                                                }
+                                            }
+                                        %>
+                                        <tr>
+                                            <td class="fw-bold text-dark text-capitalize">
+                                                <%= empName %>
+                                            </td>
+                                            <td class="text-muted"><%= moment(log.checkIn).format('DD/MM/YYYY') %></td>
+                                            <td class="text-success fw-bold"><%= moment(log.checkIn).format('hh:mm A') %></td>
+                                            <td class="text-danger fw-bold"><%= log.checkOut ? moment(log.checkOut).format('hh:mm A') : '---' %></td>
+                                            
+                                            <td class="fw-bold text-secondary small">
+                                                <i class="bi bi-clock-history me-1"></i><%= durationText %>
+                                            </td>
+
+                                            <td>
+                                                <% if(log.checkOut) { %>
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle">Completed</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">On Duty</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (log.location && log.location.lat && log.location.lng) { %>
+                                                    <button 
+                                                        class="btn btn-sm btn-outline-info" 
+                                                        onclick="openMapModal('<%= log.location.lat %>', '<%= log.location.lng %>', '<%= empName %>')"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#locationModal"
+                                                    >
+                                                        <i class="bi bi-geo-alt-fill"></i> View Map
+                                                    </button>
+                                                <% } else { %>
+                                                    <span class="text-muted small">No GPS Data</span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7" class="py-5 text-muted">No attendance records found.</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="locationModalLabel"><i class="bi bi-map me-2 text-info"></i>Punch-in Location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        let mapInstance = null;
+        let markerInstance = null;
+
+        function openMapModal(lat, lng, employeeName) {
+            const latitude = parseFloat(lat);
+            const longitude = parseFloat(lng);
+
+            setTimeout(() => {
+                if (mapInstance === null) {
+                    mapInstance = L.map('map').setView([latitude, longitude], 16);
+                    
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(mapInstance);
+
+                    markerInstance = L.marker([latitude, longitude]).addTo(mapInstance)
+                        .bindPopup(`<b>${employeeName}</b><br>Checked in from here`)
+                        .openPopup();
+                } else {
+                    mapInstance.setView([latitude, longitude], 16);
+                    markerInstance.setLatLng([latitude, longitude]);
+                    markerInstance.getPopup().setContent(`<b>${employeeName}</b><br>Checked in from here`).openPopup();
+                    
+                    mapInstance.invalidateSize();
+                }
+            }, 300);
+        }
+    </script>
+</body>
+</html>

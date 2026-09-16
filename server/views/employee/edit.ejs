@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Employee - Smart Printer</title>
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+  </head>
+  <body>
+    <%- include('../Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+      <%- include('../Components/sidebar.ejs', { currentPage: "edit", username: username }) %>
+
+      <section class="w-100">
+        <%- include('../Components/navbar.ejs') %>
+
+        <div class="container mt-4">
+          <div class="d-flex align-items-center mb-4">
+             <a href="/dashboard" class="btn btn-outline-secondary btn-sm me-3"><i class="bi bi-arrow-left"></i></a>
+             <h2 class="mb-0">Edit Employee Details</h2>
+          </div>
+
+          <form action="/dashboard/update/<%= obj._id %>" method="post" class="row gx-3 gy-4 shadow-sm p-4 rounded bg-body-tertiary">
+            
+            <div class="col-md-6">
+              <label class="form-label">Full Name</label>
+              <input value="<%= obj.fullName %>" name="fullName" type="text" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Email Address</label>
+              <input value="<%= obj.email %>" name="email" type="email" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Reset Password</label>
+              <input name="password" type="password" class="form-control" placeholder="Enter new password" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Phone Number</label>
+              <input value="<%= obj.phone %>" name="phone" type="text" class="form-control" required />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Salary</label>
+              <input value="<%= obj.salary %>" name="salary" type="number" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">System Role</label>
+              <select name="role" class="form-select">
+                <option value="employee" <%= obj.role === 'employee' ? 'selected' : '' %>>Employee</option>
+                <option value="admin" <%= obj.role === 'admin' ? 'selected' : '' %>>Admin (Full Access)</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Status</label>
+              <select name="status" class="form-select">
+                <option value="active" <%= obj.status === 'active' ? 'selected' : '' %>>Active</option>
+                <option value="inactive" <%= obj.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Hire Date</label>
+                <input value="<%= moment(obj.hireDate).format('YYYY-MM-DD') %>" name="hireDate" type="date" class="form-control" required />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Notes / Address</label>
+              <textarea name="address" class="form-control" rows="3"><%= obj.address %></textarea>
+            </div>
+
+            <div class="col-12 mt-5">
+              <button type="submit" class="btn btn-warning px-5">
+                <i class="bi bi-pencil-square me-2"></i> Update Employee
+              </button>
+              <a href="/dashboard" class="btn btn-secondary ms-2">Back to Dashboard</a>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

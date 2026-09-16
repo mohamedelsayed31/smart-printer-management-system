@@ -1,0 +1,113 @@
+<div id="sidebarId" class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark sidebar">
+  <a href="/dashboard" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <i class="bi bi-printer-fill fs-3 me-2 text-success"></i>
+    <span class="fs-4 sidebar-text">Smart Printer</span>
+  </a>
+  <hr />
+  <ul class="nav nav-pills flex-column mb-auto">
+    
+    <li class="nav-item">
+      <a href="/dashboard" class="nav-link text-white <%= currentPage === 'dashboard' ? 'active' : '' %>">
+        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+      </a>
+    </li>
+
+    <li>
+      <a href="/dashboard/jobs" class="nav-link text-white <%= currentPage === 'jobs' ? 'active' : '' %>">
+        <i class="bi bi-journal-check me-2"></i>
+        <span class="sidebar-text">Print Jobs</span>
+      </a>
+    </li>
+
+    <li>
+      <a href="/dashboard/waste" class="nav-link text-white <%= currentPage === 'waste' ? 'active' : '' %>">
+        <i class="bi bi-trash3-fill me-2 text-danger"></i>
+        <span class="sidebar-text">Waste Registration</span>
+      </a>
+    </li>
+
+    <% if (typeof userRole !== 'undefined' && userRole === 'admin') { %>
+      
+      <li class="mt-3 mb-1">
+        <small class="text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">Admin & Inventory</small>
+      </li>
+
+      <li class="nav-item">
+        <a href="/dashboard/employees" class="nav-link text-white <%= currentPage === 'index' ? 'active' : '' %>">
+          <i class="bi bi-people me-2"></i> Employees
+        </a>
+      </li>
+
+      <li>
+        <a href="/dashboard/printers" class="nav-link text-white <%= currentPage === 'printers' ? 'active' : '' %>">
+          <i class="bi bi-printer me-2"></i> <span class="sidebar-text">Printers</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/dashboard/inventory" class="nav-link text-white <%= currentPage === 'inventory' ? 'active' : '' %>">
+          <i class="bi bi-box-seam me-2"></i> <span class="sidebar-text">Inventory</span>
+        </a>
+      </li>
+
+      <li class="mt-3 mb-1">
+        <small class="text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">Reports & Analytics</small>
+      </li>
+
+      <li>
+        <a href="/dashboard/attendance/reports" class="nav-link text-white <%= currentPage === 'attendance_reports' ? 'active' : '' %>">
+          <i class="bi bi-person-check me-2 text-info"></i>
+          <span class="sidebar-text">Attendance Logs</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="/dashboard/financial/report" class="nav-link text-white <%= currentPage === 'financial' ? 'active' : '' %>">
+          <i class="bi bi-currency-dollar me-2 text-success"></i>
+          <span class="sidebar-text">Financial Reports</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="/dashboard/printing/reports" class="nav-link text-white <%= currentPage === 'printing_reports' ? 'active' : '' %>">
+          <i class="bi bi-file-earmark-bar-graph me-2 text-warning"></i>
+          <span class="sidebar-text">Printing Activity</span>
+        </a>
+      </li>
+
+      <li class="mt-3 mb-1">
+        <small class="text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">System Management</small>
+      </li>
+
+      <li>
+        <a href="/dashboard/materials" class="nav-link text-white <%= currentPage === 'materials' ? 'active' : '' %>">
+          <i class="bi bi-tags me-2 text-secondary"></i>
+          <span class="sidebar-text">Price List & Categories</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="/dashboard/settings" class="nav-link text-white <%= currentPage === 'settings' ? 'active' : '' %>">
+          <i class="bi bi-gear-fill me-2 text-primary"></i>
+          <span class="sidebar-text">Settings</span>
+        </a>
+      </li>
+
+    <% } %> 
+    </ul>
+  <hr />
+  <div class="dropdown">
+    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+      <img src="/img/user.png" width="32" height="32" class="rounded-circle me-2" />
+      <strong class="sidebar-text"><%= typeof username !== 'undefined' ? username : 'User' %></strong>
+      <% if (typeof userRole !== 'undefined') { %>
+        <span class="badge <%= userRole === 'admin' ? 'bg-danger' : 'bg-primary' %> ms-2" style="font-size: 0.65rem;">
+          <%= userRole %>
+        </span>
+      <% } %>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+      <li><a class="dropdown-item" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Sign out</a></li>
+    </ul>
+  </div>
+</div>

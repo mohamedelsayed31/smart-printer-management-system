@@ -1,0 +1,20 @@
+body {
+  background-color: #f8f9fa; /* لون خلفية هادي */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+  border-radius: 15px !important; /* حواف ناعمة للكروت */
+}
+
+.btn {
+  transition: all 0.3s ease;
+}
+
+/* تحسين شكل الزراير في الموبايل */
+@media (max-width: 576px) {
+  .container {
+      padding-left: 10px;
+      padding-right: 10px;
+  }
+}

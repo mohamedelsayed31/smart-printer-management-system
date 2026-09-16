@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>View Employee - <%= obj.fullName %></title>
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+  </head>
+  <body>
+    <%- include('../Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+      <%- include('../Components/sidebar.ejs', { currentPage: "view", username: username }) %>
+
+      <section class="w-100">
+        <%- include('../Components/navbar.ejs') %>
+
+        <div class="container mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Employee Profile: <span class="text-primary"><%= obj.fullName %></span></h2>
+            <div>
+                <a href="/dashboard" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+                <a href="/dashboard/edit/<%= obj._id %>" class="btn btn-warning"><i class="bi bi-pencil"></i> Edit</a>
+            </div>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-body p-0">
+              <table class="table table-bordered table-striped mb-0">
+                <tbody>
+                  <tr>
+                    <th style="width: 200px;" class="bg-body-secondary">Full Name</th>
+                    <td><strong><%= obj.fullName %></strong></td>
+                  </tr>
+                  <tr>
+                    <th style="width: 200px;" class="bg-body-secondary">Email</th>
+                    <td><strong><%= obj.email %></strong></td>
+                  </tr>
+                  <tr>
+                    <th class="bg-body-secondary">Phone Number</th>
+                    <td><%= obj.phone %></td>
+                  </tr>
+                  <tr>
+                    <th class="bg-body-secondary">Salary</th>
+                    <td>$<%= obj.salary %></td>
+                  </tr>
+                  <tr>
+                    <th class="bg-body-secondary">Role</th>
+                    <td><%= obj.role %></td>
+                  </tr>
+                  <tr>
+                    <th class="bg-body-secondary">Status</th>
+                    <td>
+                        <span class="badge <%= obj.status === 'active' ? 'bg-success' : 'bg-danger' %>">
+                            <%= obj.status %>
+                        </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="bg-body-secondary">Hire Date</th>
+                    <td><%= moment(obj.hireDate).format("MMMM Do, YYYY") %></td>
+                  </tr>
+                  <tr>
+                    <th class="bg-body-secondary">Address / Notes</th>
+                    <td><%= obj.address || 'No notes provided' %></td>
+                  </tr>
+                  <tr>
+                    <th class="bg-body-secondary">System Entry Created</th>
+                    <td><%= moment(obj.createdAt).format("MMM Do YYYY, h:mm a") %></td>
+                  </tr>
+                  <tr>
+                    <th class="bg-body-secondary">Last Update</th>
+                    <td><%= moment(obj.updatedAt).format("MMM Do YYYY, h:mm a") %></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

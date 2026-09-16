@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Add Item - Inventory</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+  </head>
+  <body>
+    <%- include('../Components/dark-light.ejs') %>
+    <main class="d-flex flex-nowrap">
+      <%- include('../Components/sidebar.ejs', { currentPage: "inventory", username: username }) %>
+      <section class="w-100">
+        <%- include('../Components/navbar.ejs') %>
+        <div class="container mt-4">
+          <div class="d-flex align-items-center mb-4">
+            <a href="/dashboard/inventory" class="btn btn-outline-secondary btn-sm me-3"><i class="bi bi-arrow-left"></i></a>
+            <h2 class="mb-0">Add Item to Inventory</h2>
+          </div>
+
+          <form action="/dashboard/inventory/add" method="POST" class="row gx-3 gy-4 shadow-sm p-4 rounded bg-body-tertiary">
+            <div class="col-md-6">
+              <label class="form-label">Item Name</label>
+              <input name="itemName" type="text" class="form-control" placeholder="e.g. A4 Paper Double A" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Category</label>
+              <select name="category" class="form-select" required>
+                <option value="Paper">Paper</option>
+                <option value="Ink">Ink</option>
+                <option value="Hardware">Hardware</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Initial Quantity</label>
+              <input name="quantity" type="number" class="form-control" placeholder="0" required />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Unit</label>
+              <select name="unit" class="form-select">
+                <option value="Piece">Piece</option>
+                <option value="Box">Box</option>
+                <option value="Rim">Rim</option>
+                <option value="Bottle">Bottle</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Min Alert Quantity</label>
+              <input name="minQuantity" type="number" class="form-control" value="5" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Cost Price (التكلفة)</label>
+              <div class="input-group">
+                <input name="costPrice" type="number" step="0.01" class="form-control text-danger" placeholder="0.00" required />
+                <span class="input-group-text">EGP</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Selling Price (البيع)</label>
+              <div class="input-group">
+                <input name="sellingPrice" type="number" step="0.01" class="form-control text-success" placeholder="0.00" required />
+                <span class="input-group-text">EGP</span>
+              </div>
+            </div>
+
+            <div class="col-12 mt-5">
+              <button type="submit" class="btn btn-primary px-5">
+                <i class="bi bi-box-arrow-in-down me-2"></i> Save to Warehouse
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

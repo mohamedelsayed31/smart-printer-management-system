@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Print Jobs - Smart Printer</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+  </head>
+  <body>
+    <%- include('../Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+      <%- include('../Components/sidebar.ejs', { currentPage: "jobs", username: username }) %>
+
+      <section class="w-100">
+        <%- include('../Components/navbar.ejs') %>
+
+        <div class="container mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-journal-check me-2"></i>Print History</h2>
+            <a href="/dashboard/jobs/add" class="btn btn-primary btn-lg">
+              <i class="bi bi-plus-lg me-1"></i> New Print Job
+            </a>
+          </div>
+
+          <div class="table-responsive shadow-sm rounded bg-body-tertiary p-3">
+            <table class="table table-hover align-middle text-center">
+              <thead class="table-dark">
+                <tr>
+                  <th>Date</th>
+                  <th>Employee</th>
+                  <th>Customer</th>
+                  <th>Printer</th>
+                  <th>Paper Type</th>
+                  <th>Pages</th>
+                  <th>Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (arr.length > 0) { %>
+                  <% arr.forEach(job => { %>
+                    <tr>
+                      <td>
+                        <small class="text-muted">
+                          <%= new Date(job.jobDate).toLocaleDateString('en-GB') %><br>
+                          <%= new Date(job.jobDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                        </small>
+                      </td>
+                      <td><span class="badge bg-light text-dark shadow-sm"><%= job.employee ? job.employee.username : 'Deleted User' %></span></td>
+                      <td><strong><%= job.customerName %></strong></td>
+                      <td><i class="bi bi-printer me-1"></i><%= job.printer ? job.printer.name : 'N/A' %></td>
+                      <td><%= job.itemUsed ? job.itemUsed.itemName : 'N/A' %></td>
+                      <td><span class="fw-bold text-primary"><%= job.pagesCount %></span></td>
+                      <td><span class="badge bg-success fs-6"><%= job.totalPrice %> EGP</span></td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="7" class="py-5 text-muted text-center">
+                      <i class="bi bi-file-earmark-text fs-1 d-block mb-2"></i>
+                      No print jobs recorded yet.
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+  </body>
+</html>

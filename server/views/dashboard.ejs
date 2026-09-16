@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - Smart Printer</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+  </head>
+  <body>
+    <%- include('./Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+      <%- include('./Components/sidebar.ejs', { currentPage: "dashboard", username: username }) %>
+
+      <section class="w-100">
+        <%- include('./Components/navbar.ejs') %>
+
+        <div class="container-fluid mt-4 px-4">
+          <h2 class="mb-4"><i class="bi bi-speedometer2 me-2"></i>System Overview</h2>
+
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4 col-xl">
+              <div class="card bg-primary text-white shadow-sm border-0 h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                  <h6 class="card-title text-white-50 small uppercase">Revenue Today</h6>
+                  <h3 class="mb-0"><%= stats.dailyRevenue.toLocaleString() %> EGP</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4 col-xl">
+              <div class="card bg-success text-white shadow-sm border-0 h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                  <h6 class="card-title text-white-50 small uppercase">Jobs Today</h6>
+                  <h3 class="mb-0"><%= stats.totalJobsToday %></h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4 col-xl">
+              <div class="card <%= stats.lowStockItems > 0 ? 'bg-danger' : 'bg-secondary' %> text-white shadow-sm border-0 h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                  <h6 class="card-title text-white-50 small uppercase">Low Stock</h6>
+                  <h3 class="mb-0"><%= stats.lowStockItems %> Items</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl">
+              <div class="card bg-warning text-dark shadow-sm border-0 h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                  <h6 class="card-title text-dark-50 small uppercase">Present Today</h6>
+                  <h3 class="mb-0"><%= stats.presentToday %> Members</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl">
+              <div class="card bg-dark text-white shadow-sm border-0 h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                  <h6 class="card-title text-white-50 small uppercase">Waste Today</h6>
+                  <h3 class="mb-0"><%= stats.totalWastedSheets %> Sheets</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-12 col-xl-4">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                  <h5 class="mb-0 text-dark"><strong><i class="bi bi-people me-2"></i>Staff Activity Today</strong></h5>
+                </div>
+                <div class="card-body">
+                  <% if (staffStatus && staffStatus.length > 0) { %>
+                    <% staffStatus.forEach(staff => { %>
+                      <div class="mb-4 p-2 rounded <%= staff.checkOut ? 'bg-light border' : '' %>">
+                        <div class="d-flex justify-content-between mb-1">
+                          <span class="fw-bold text-capitalize">
+                               <%= staff.name %> 
+                               <% if (staff.checkOut) { %>
+                                 <small class="badge bg-secondary ms-1 text-white">Finished</small>
+                               <% } else { %>
+                                 <small class="badge bg-success ms-1 text-white">Active</small>
+                               <% } %>
+                          </span>
+                          <small class="text-muted">In: <%= moment(staff.checkIn).format('hh:mm A') %></small>
+                        </div>
+                        
+                        <div class="progress" style="height: 8px;">
+                          <% let percent = Math.min((staff.currentHours / 8) * 100, 100); %>
+                          <div class="progress-bar <%= staff.checkOut ? 'bg-secondary' : 'bg-info progress-bar-striped progress-bar-animated' %>" 
+                               role="progressbar" 
+                               style="width: <%= percent + '%' %>"></div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-1">
+                          <small class="<%= staff.checkOut ? 'text-muted' : 'text-info fw-bold' %>">
+                               Worked: <%= staff.currentHours %> hrs
+                          </small>
+                          <% if (staff.checkOut) { %>
+                              <small class="text-danger small fw-bold">Out: <%= moment(staff.checkOut).format('hh:mm A') %></small>
+                          <% } %>
+                        </div>
+                      </div>
+                    <% }) %>
+                  <% } else { %>
+                    <div class="text-center py-5">
+                      <i class="bi bi-person-x text-muted" style="font-size: 2rem;"></i>
+                      <p class="text-muted mt-2">No activity recorded today.</p>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-xl-8">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 text-dark"><strong><i class="bi bi-clock-history me-2"></i>Recent Jobs</strong></h5>
+                  <a href="/dashboard/jobs" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 text-center">
+                      <thead class="table-light text-secondary">
+                        <tr>
+                          <th>Time</th>
+                          <th>Details</th>
+                          <th>Employee</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% if (recentJobs && recentJobs.length > 0) { %> 
+                          <% recentJobs.forEach((job) => { %>
+                            <tr>
+                              <td class="text-muted small"><%= moment(job.createdAt).format('hh:mm A') %></td>
+                              <td>
+                                <span class="badge bg-light text-dark border small">
+                                  <%= job.paperType %> | <%= job.colorMode %>
+                                </span>
+                              </td>
+                              <td class="small text-capitalize">
+                                <strong><%= job.employeeName %></strong>
+                              </td>
+                              <td class="text-success fw-bold small"><%= job.totalPrice.toLocaleString() %> EGP</td>
+                            </tr>
+                          <% }) %> 
+                        <% } else { %>
+                          <tr><td colspan="4" class="py-4 text-muted">No activities recorded today.</td></tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+  </body>
+</html>

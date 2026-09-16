@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <meta charset="utf-8" />
+    <title>Price List - Smart Printer</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+</head>
+<body>
+    <main class="d-flex flex-nowrap">
+        <%- include('../Components/sidebar.ejs', { currentPage: "materials", username: username }) %>
+
+        <section class="w-100 p-4">
+            <h2 class="mb-4">Price List & Materials</h2>
+
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <form action="/dashboard/materials/add" method="POST" class="row g-3">
+                        <div class="col-md-3">
+                            <input type="text" name="name" class="form-control" placeholder="Material Name (e.g. Glossy 150g)" required>
+                        </div>
+                        <div class="col-md-2">
+                            <select name="paperSize" class="form-select">
+                                <option value="A4">A4</option>
+                                <option value="A3">A3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="costPrice" class="form-control" placeholder="Cost/Sheet" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="sellingPrice" class="form-control" placeholder="Sell/Sheet" required>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">Add to List</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Cost/Sheet</th>
+                            <th>Sell/Sheet</th>
+                            <th>Profit/Sheet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% materials.forEach(m => { %>
+                            <tr>
+                                <td><%= m.name %></td>
+                                <td><span class="badge bg-info"><%= m.paperSize %></span></td>
+                                <td class="text-danger"><%= m.costPrice %> EGP</td>
+                                <td class="text-success"><%= m.sellingPrice %> EGP</td>
+                                <td class="fw-bold"><%= (m.sellingPrice - m.costPrice).toFixed(2) %> EGP</td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

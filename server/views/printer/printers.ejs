@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Printers Management - Smart Printer</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+  </head>
+  <body>
+    <%- include('../Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+      <%- include('../Components/sidebar.ejs', { currentPage: "printers", username: username }) %>
+
+      <section class="w-100">
+        <%- include('../Components/navbar.ejs') %>
+
+        <div class="container mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-printer-fill me-2"></i>Printers Management</h2>
+            <a href="/dashboard/printers/add" class="btn btn-primary">
+              <i class="bi bi-plus-circle me-1"></i> Add New Printer
+            </a>
+          </div>
+
+          <div class="table-responsive shadow-sm rounded bg-body-tertiary p-3">
+            <table class="table table-hover align-middle text-center">
+              <thead class="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th class="text-start">Printer Name</th>
+                  <th>Model</th>
+                  <th>Status</th>
+                  <th>Counter (Pages)</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (arr.length > 0) { %> 
+                  <% arr.forEach((printer, index) => { %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td class="text-start"><strong><%= printer.name %></strong></td>
+                  <td><%= printer.model || 'N/A' %></td>
+                  <td>
+                    <% if (printer.status === 'active') { %>
+                    <span class="badge bg-success">Active</span>
+                    <% } else if (printer.status === 'maintenance') { %>
+                    <span class="badge bg-warning text-dark">Maintenance</span>
+                    <% } else { %>
+                    <span class="badge bg-danger">Out of Service</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <span class="badge bg-info text-dark"><%= printer.counter %></span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <a href="/dashboard/printers/edit/<%= printer._id %>" class="btn btn-sm btn-outline-primary" title="Edit Printer">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+
+                      <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePrinter<%= printer._id %>" title="Delete Printer">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+
+                    <div class="modal fade text-start" id="deletePrinter<%= printer._id %>" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body text-center">
+                            <p class="fs-5">Are you sure you want to delete printer:<br><strong>"<%= printer.name %>"</strong>?</p>
+                            <p class="text-muted small">This will remove all records associated with this printer.</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="/dashboard/printers/delete/<%= printer._id %>" method="POST" class="d-inline">
+                              <button type="submit" class="btn btn-danger px-4">Confirm Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </td>
+                </tr>
+                <% }) %> 
+                <% } else { %>
+                <tr>
+                  <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-printer fs-1 d-block mb-3"></i>
+                    No printers found. Click "Add New Printer" to start.
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+  </body>
+</html>

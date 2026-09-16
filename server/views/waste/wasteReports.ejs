@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Waste Reports - Smart Printer</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: rgba(220, 53, 69, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <%- include('../Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+        <%- include('../Components/sidebar.ejs', { currentPage: "waste", username: username }) %>
+
+        <section class="w-100">
+            <%- include('../Components/navbar.ejs') %>
+
+            <div class="container-fluid mt-4 px-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="mb-1">
+                            <i class="bi bi-trash3-fill me-2 text-danger"></i>Waste Reports
+                        </h2>
+                        <p class="text-muted small mb-0">Track and manage printing paper waste and printer faults.</p>
+                    </div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Waste Logs</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <div class="card shadow-sm border-0 mb-4 bg-light">
+                    <div class="card-body">
+                        <form action="/dashboard/waste" method="GET" class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label for="employeeId" class="form-label text-muted small fw-bold">Filter by Employee</label>
+                                <select name="employeeId" id="employeeId" class="form-select">
+                                    <option value="">All Employees</option>
+                                    <% if (typeof employees !== 'undefined') { %>
+                                        <% employees.forEach(emp => { %>
+                                            <option value="<%= emp._id %>" <%= typeof filters !== 'undefined' && filters.employeeId == emp._id ? 'selected' : '' %>>
+                                                <%= emp.fullName || emp.username %>
+                                            </option>
+                                        <% }) %>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="startDate" class="form-label text-muted small fw-bold">From Date</label>
+                                <input type="date" name="startDate" id="startDate" class="form-control" value="<%= typeof filters !== 'undefined' ? filters.startDate : '' %>">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="endDate" class="form-label text-muted small fw-bold">To Date</label>
+                                <input type="date" name="endDate" id="endDate" class="form-control" value="<%= typeof filters !== 'undefined' ? filters.endDate : '' %>">
+                            </div>
+
+                            <div class="col-md-3 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-funnel-fill me-1"></i> Filter
+                                </button>
+                                <a href="/dashboard/waste" class="btn btn-outline-secondary w-100 text-decoration-none d-flex justify-content-center align-items-center">
+                                    Clear
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-dark">Detailed Waste Log</h5>
+                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                            Total Records: <%= reports.length %>
+                        </span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 text-center">
+                                <thead class="table-light text-secondary">
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Employee</th>
+                                        <th>Printer Unit</th>
+                                        <th>Wasted Sheets</th>
+                                        <th class="text-start">Reason / Fault Description</th>
+                                        <th>Responsibility (AI)</th>
+                                        <th class="text-start">AI Smart Diagnostics</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (reports && reports.length > 0) { %>
+                                        <% reports.forEach(report => { %>
+                                            <tr>
+                                                <td class="text-muted small">
+                                                    <%= moment(report.date).format('DD/MM/YYYY') %> <br>
+                                                    <span class="fw-bold text-dark"><%= moment(report.date).format('hh:mm A') %></span>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center justify-content-center">
+                                                        <div class="bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 12px;">
+                                                            <% if (report.employeeId) { %>
+                                                                <%= (report.employeeId.fullName || report.employeeId.username || '?').charAt(0).toUpperCase() %>
+                                                            <% } else { %>?<% } %>
+                                                        </div>
+                                                        <span class="fw-semibold">
+                                                            <%= report.employeeId ? (report.employeeId.fullName || report.employeeId.username) : 'Deleted User' %>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-light text-dark border px-3 py-2">
+                                                        <i class="bi bi-printer me-1"></i>
+                                                        <%= report.printerId ? report.printerId.name : 'Unknown' %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-bold text-danger">
+                                                        <%= report.wastedSheets %> <small>Sheets</small>
+                                                    </div>
+                                                </td>
+                                                <td class="text-start">
+                                                    <div class="p-2 rounded bg-light small border-start border-danger border-3">
+                                                        <%= report.reason || 'No specific reason provided.' %>
+                                                    </div>
+                                                </td>
+                                                
+                                                <td>
+                                                    <% if (report.faultType === 'Machine') { %>
+                                                        <span class="badge bg-warning text-dark px-2 py-2 border border-warning-subtle w-100">
+                                                            <i class="bi bi-cpu-fill me-1"></i> Machine Fault
+                                                        </span>
+                                                    <% } else if (report.faultType === 'Employee') { %>
+                                                        <span class="badge bg-danger px-2 py-2 border border-danger-subtle w-100">
+                                                            <i class="bi bi-person-exclamation me-1"></i> Employee Error
+                                                        </span>
+                                                    <% } else if (report.faultType === 'Unknown') { %>
+                                                        <span class="badge bg-secondary-subtle text-secondary px-2 py-2 border w-100">
+                                                            <i class="bi bi-question-circle me-1"></i> Manual Review
+                                                        </span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-secondary-subtle text-secondary px-2 py-2 border w-100">Legacy Data</span>
+                                                    <% } %>
+                                                </td>
+
+                                                <td class="text-start">
+                                                    <% if (report.aiExplanation) { %>
+                                                        <div class="p-2 rounded bg-info-subtle text-info-emphasis small border-start border-info border-3" dir="rtl">
+                                                            <i class="bi bi-robot me-1"></i> <%= report.aiExplanation %>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <span class="text-muted small ps-2">Manual entry / No AI log</span>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="7" class="py-5">
+                                                <div class="text-center text-muted">
+                                                    <i class="bi bi-clipboard-x fs-1 d-block mb-3 opacity-25"></i>
+                                                    <h5>No Waste Records Found</h5>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+</body>
+</html>

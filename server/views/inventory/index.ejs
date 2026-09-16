@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="/js/color-modes.js"></script>
+    <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inventory - Smart Printer</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/dark-light.css" />
+    <link href="/css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/myStyle.css" />
+  </head>
+  <body>
+    <%- include('../Components/dark-light.ejs') %>
+
+    <main class="d-flex flex-nowrap">
+      <%- include('../Components/sidebar.ejs', { currentPage: "inventory", username: username }) %>
+
+      <section class="w-100">
+        <%- include('../Components/navbar.ejs') %>
+
+        <div class="container mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-box-seam me-2"></i>Warehouse Inventory</h2>
+            <a href="/dashboard/inventory/add" class="btn btn-success">
+              <i class="bi bi-plus-lg me-1"></i> Add New Item
+            </a>
+          </div>
+
+          <div class="table-responsive shadow-sm rounded bg-body-tertiary p-3">
+            <table class="table table-hover align-middle text-center">
+              <thead class="table-dark">
+                <tr>
+                  <th>Item Name</th>
+                  <th>Category</th>
+                  <th>Quantity</th>
+                  <th>Cost Price</th>
+                  <th>Selling Price</th>
+                  <th>Profit/Unit</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (arr.length > 0) { %> <% arr.forEach(item => { %>
+                <tr class="<%= item.quantity <= item.minQuantity ? 'table-danger' : '' %>">
+                  <td class="text-start">
+                    <strong><%= item.itemName %></strong>
+                  </td>
+                  <td>
+                    <span class="badge bg-secondary text-uppercase"><%= item.category %></span>
+                  </td>
+                  <td>
+                    <span class="fw-bold <%= item.quantity <= item.minQuantity ? 'text-danger' : '' %>">
+                      <%= item.quantity %> <%= item.unit %>
+                    </span>
+                  </td>
+                  <td class="text-danger small"><%= item.costPrice %> EGP</td>
+                  <td class="text-success fw-bold"><%= item.sellingPrice %> EGP</td>
+                  <td class="fw-bold text-primary">
+                    <%= (item.sellingPrice - item.costPrice).toFixed(2) %>
+                  </td>
+                  <td>
+                    <% if (item.quantity <= 0) { %>
+                    <span class="badge bg-danger">Out of Stock</span>
+                    <% } else if (item.quantity <= item.minQuantity) { %>
+                    <span class="badge bg-warning text-dark">Low Stock</span>
+                    <% } else { %>
+                    <span class="badge bg-success">In Stock</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a href="/dashboard/inventory/edit/<%= item._id %>" class="btn btn-sm btn-outline-primary" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#stockModal<%= item._id %>" title="Add Stock">
+                        <i class="bi bi-plus-circle"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<%= item._id %>" title="Delete">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+
+                    <div class="modal fade text-start" id="stockModal<%= item._id %>" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <form action="/dashboard/inventory/add-stock/<%= item._id %>" method="POST" class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Update Stock: <%= item.itemName %></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="mb-3">
+                              <label class="form-label">Additional Quantity to Add</label>
+                              <input type="number" name="additionalQuantity" class="form-control" placeholder="e.g. 10" required min="1" />
+                            </div>
+                            <p class="text-muted small">Current stock: <%= item.quantity %> <%= item.unit %></p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add to Inventory</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                    <div class="modal fade text-start" id="deleteModal<%= item._id %>" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body text-center">
+                            <p class="fs-5">Are you sure you want to delete <strong>"<%= item.itemName %>"</strong>?</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="/dashboard/inventory/delete/<%= item._id %>" method="POST" class="d-inline">
+                              <button type="submit" class="btn btn-danger px-4">Delete Now</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %> <% } else { %>
+                <tr>
+                  <td colspan="8" class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox fs-1 d-block mb-2"></i> No items found.
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebars.js"></script>
+  </body>
+</html>
