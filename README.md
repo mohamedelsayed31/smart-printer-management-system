@@ -300,57 +300,72 @@ Example AI result:
 
 ## 📸 Screenshots
 
-### AI-Assisted Waste Analysis
+### 🔐 Authentication & Main Views
 
-<p align="center">
-  <img src="docs/screenshots/07-ai-waste-result.png" alt="AI Waste Analysis Result" width="900" />
-</p>
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>Login</strong><br><br>
+      <img src="docs/screenshots/01-login.png" alt="Login Page" width="100%" />
+    </td>
+    <td width="50%" align="center">
+      <strong>Admin Dashboard</strong><br><br>
+      <img src="docs/screenshots/02-admin-dashboard.png" alt="Admin Dashboard" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <strong>Employee View</strong><br><br>
+      <img src="docs/screenshots/03-employee-view.png" alt="Employee View" width="100%" />
+    </td>
+    <td width="50%" align="center">
+      <strong>Smart Attendance</strong><br><br>
+      <img src="docs/screenshots/04-smart-attendance.png" alt="Smart Attendance" width="100%" />
+    </td>
+  </tr>
+</table>
 
-For the complete project gallery, add the final screenshots under `docs/screenshots/` using these names:
+### 🖨️ Printing & AI Waste Analysis
 
-```text
-01-login.png
-02-admin-dashboard.png
-03-employee-view.png
-04-smart-attendance.png
-05-print-job.png
-06-ai-waste-upload.png
-07-ai-waste-result.png
-08-inventory-management.png
-09-employee-management.png
-10-profile.png
-```
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>Print Job Registration</strong><br><br>
+      <img src="docs/screenshots/05-print-job.png" alt="Print Job Registration" width="100%" />
+    </td>
+    <td width="50%" align="center">
+      <strong>AI Waste Upload</strong><br><br>
+      <img src="docs/screenshots/06-ai-waste-upload.png" alt="AI Waste Upload" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <strong>AI-Assisted Waste Analysis Result</strong><br><br>
+      <img src="docs/screenshots/07-ai-waste-result.png" alt="AI Waste Analysis Result" width="90%" />
+    </td>
+  </tr>
+</table>
 
-<!--
-After adding the screenshots, you can enable a full gallery like this:
+### ⚙️ Administration & Profile
 
-### Login
-![Login](docs/screenshots/01-login.png)
-
-### Admin Dashboard
-![Admin Dashboard](docs/screenshots/02-admin-dashboard.png)
-
-### Employee View
-![Employee View](docs/screenshots/03-employee-view.png)
-
-### Smart Attendance
-![Smart Attendance](docs/screenshots/04-smart-attendance.png)
-
-### Print Job
-![Print Job](docs/screenshots/05-print-job.png)
-
-### AI Waste Upload
-![AI Waste Upload](docs/screenshots/06-ai-waste-upload.png)
-
-### Inventory Management
-![Inventory Management](docs/screenshots/08-inventory-management.png)
-
-### Employee Management
-![Employee Management](docs/screenshots/09-employee-management.png)
-
-### Profile
-![Profile](docs/screenshots/10-profile.png)
--->
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>Inventory Management</strong><br><br>
+      <img src="docs/screenshots/08-inventory-management.png" alt="Inventory Management" width="100%" />
+    </td>
+    <td width="50%" align="center">
+      <strong>Employee Management</strong><br><br>
+      <img src="docs/screenshots/09-employee-management.png" alt="Employee Management" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <strong>Employee Profile</strong><br><br>
+      <img src="docs/screenshots/10-profile.png" alt="Employee Profile" width="75%" />
+    </td>
+  </tr>
+</table>
 
 ---
 
